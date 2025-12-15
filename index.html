@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GrooveStation</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00f3ff">
+    <link rel="apple-touch-icon" href="icon-192.png">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Start Overlay (For Audio Context) -->
+        <div id="start-overlay" class="overlay active">
+            <div class="overlay-content">
+                <i class="fa-solid fa-headphones"></i>
+                <h2>Click to Start</h2>
+                <p>Enable Audio Engine</p>
+            </div>
+        </div>
+
+        <!-- Header & Controls -->
+        <header class="studio-header">
+            <div class="logo">
+                <i class="fa-solid fa-drum"></i>
+                <h1>GROOVE<span class="highlight">STATION</span></h1>
+            </div>
+
+            <div class="transport-controls">
+                <div class="controls-left">
+                    <button id="play-btn" class="control-btn" title="Play/Pause">
+                        <i class="fa-solid fa-play"></i>
+                    </button>
+                    <button id="stop-btn" class="control-btn" title="Stop">
+                        <i class="fa-solid fa-stop"></i>
+                    </button>
+                </div>
+                <div class="controls-center">
+                    <label for="bpm-input">BPM:</label>
+                    <input type="number" id="bpm-input" min="60" max="200" value="120" />
+                    <select id="time-sig-select" onchange="changeTimeSignature(this.value)"
+                        style="background:#121212; color:#fff; border:1px solid #333; padding:5px; border-radius:4px; margin-left:10px;">
+                        <option value="2/4">2/4</option>
+                        <option value="3/4">3/4</option>
+                        <option value="4/4">4/4</option>
+                        <option value="6/8">6/8</option>
+                    </select>
+                    <select id="sound-source-select" onchange="changeSoundSource(this.value)"
+                        style="background:#121212; color:#fff; border:1px solid #333; padding:5px; border-radius:4px; margin-left:10px;">
+                        <option value="synth">🎹 Synth</option>
+                        <option value="local">📁 Local</option>
+                        <option value="embedded">🔊 Embedded</option>
+                        <option value="cdn">☁️ CDN</option>
+                    </select>
+                </div>
+                <div class="controls-right">
+                    <button id="clear-btn" class="control-btn" title="Clear">
+                        <i class="fa-solid fa-eraser"></i>
+                    </button>
+                    <button id="record-btn" class="control-btn" title="Save Pattern">
+                        <i class="fa-solid fa-circle"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Sequencer Interface -->
+        <main class="sequencer-container">
+            <div class="sequencer-grid" id="sequencer-grid">
+                <!-- Tracks will be generated here by JS -->
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="studio-footer">
+            <div class="footer-controls">
+                <button id="library-btn" class="footer-btn"><i class="fa-solid fa-folder-open"></i> Library</button>
+                <button id="notation-btn" class="footer-btn" onclick="toggleNotationView()"><i
+                        class="fa-solid fa-music"></i> Notation</button>
+                <button id="metronome-btn" class="footer-btn" onclick="toggleMetronome()"><i
+                        class="fa-solid fa-clock"></i> Metronome</button>
+            </div>
+            <div class="status-bar">
+                <span id="status-text">Waiting for user...</span>
+            </div>
+            <div class="shortcuts">
+                <span><kbd>SPACE</kbd> Play/Pause</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Side Drawer for Add Track -->
+    <div id="track-drawer" class="side-drawer">
+        <div class="drawer-header">
+            <h3>Add Track</h3>
+            <button class="drawer-close" onclick="closeDrawer('track-drawer')">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <div class="drawer-content">
+            <div class="sound-list" id="drawer-sound-options">
+                <!-- Options generated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Pattern Modal -->
+    <div id="save-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Save Pattern</h2>
+                <button class="close-btn" onclick="closeModal('save-modal')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="pattern-name-input" placeholder="Pattern Name" />
+            </div>
+            <div class="modal-footer">
+                <button class="btn secondary" onclick="closeModal('save-modal')">Cancel</button>
+                <button class="btn primary" onclick="savePattern()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Library Modal -->
+    <div id="library-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Pattern Library</h2>
+                <button class="close-btn" onclick="closeModal('library-modal')"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div id="library-list"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn secondary" onclick="closeModal('library-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Metronome Modal -->
+    <div id="metronome-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Metronome</h2>
+                <button class="close-btn" onclick="closeModal('metronome-modal')"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" style="text-align:center; padding:40px;">
+                <div style="margin-bottom:30px;">
+                    <label for="metro-bpm" style="font-size:18px; display:block; margin-bottom:10px;">BPM</label>
+                    <input type="number" id="metro-bpm" min="40" max="240" value="120"
+                        style="font-size:24px; padding:10px; width:120px; text-align:center;"
+                        onchange="updateMetronomeBPM(this.value)" />
+                </div>
+                <div style="margin-bottom:30px;">
+                    <label for="metro-time-sig" style="font-size:18px; display:block; margin-bottom:10px;">Time
+                        Signature</label>
+                    <select id="metro-time-sig" onchange="updateMetronomeTimeSig(this.value)"
+                        style="font-size:18px; padding:10px; background:#222; color:#fff; border:1px solid #444; border-radius:6px;">
+                        <option value="2/4">2/4</option>
+                        <option value="3/4">3/4</option>
+                        <option value="4/4" selected>4/4</option>
+                        <option value="6/8">6/8</option>
+                    </select>
+                </div>
+                <div style="margin-bottom:30px;">
+                    <button id="metro-toggle" class="btn primary" onclick="toggleMetronomePlay()"
+                        style="font-size:20px; padding:15px 40px;">
+                        <i class="fa-solid fa-play"></i> Start
+                    </button>
+                </div>
+                <div style="margin-bottom:20px;">
+                    <label style="display:block; margin-bottom:10px;">Volume</label>
+                    <input type="range" id="metro-volume" min="0" max="100" value="50" style="width:200px;"
+                        onchange="updateMetronomeVolume(this.value)" />
+                </div>
+                <div id="metro-indicator"
+                    style="width:100px; height:100px; border-radius:50%; background:#ddd; margin:30px auto; transition:all 0.1s;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notation View (Full Page) -->
+    <div id="notation-view" class="notation-view">
+        <div class="notation-header">
+            <h2>Notation View</h2>
+            <div style="display:flex; gap:10px;">
+                <button class="btn primary" onclick="downloadPDF()"><i class="fa-solid fa-file-pdf"></i> Save
+                    PDF</button>
+                <button class="btn secondary" onclick="toggleNotationView()">Close</button>
+            </div>
+        </div>
+        <div class="notation-content">
+            <canvas id="notation-canvas"></canvas>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW registered'))
+                    .catch(err => console.log('SW registration failed: ', err));
+            });
+        }
+    </script>
+</body>
+
+</html>

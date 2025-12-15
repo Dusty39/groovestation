@@ -1,4 +1,4 @@
-const CACHE_NAME = 'drumview-v1';
+const CACHE_NAME = 'grooveStation-v1';
 const ASSETS_TO_CACHE = [
     './',
     'index.html',

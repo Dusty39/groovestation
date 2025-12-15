@@ -1014,3 +1014,78 @@ kbd {
         /* Show text again if fits */
     }
 }
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .app-container {
+        border-radius: 0;
+        margin-bottom: 0;
+        max-width: 100%;
+        height: 100vh; /* Full viewport height */
+        display: flex;
+        flex-direction: column;
+    }
+
+    body {
+        padding-top: 0;
+        align-items: flex-start; /* Ensure top alignment */
+    }
+
+    .studio-header {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .transport-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .controls-center {
+        order: 3; /* Move BPM to bottom of controls on very small screens if needed */
+        width: 100%;
+        justify-content: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .logo h1 {
+        font-size: 20px;
+    }
+
+    /* Sequencer responsiveness */
+    .sequencer-container {
+        overflow-x: auto; /* Enable horizontal scroll for tracks */
+        padding: 10px;
+    }
+
+    .sequencer-grid {
+        min-width: 800px; /* Ensure grid doesn't squash too much */
+    }
+
+    /* Modal adjustments */
+    .modal-content {
+        width: 95%;
+        padding: 20px;
+    }
+
+    /* Footer adjustments */
+    .studio-footer {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+        text-align: center;
+    }
+    
+    .footer-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .shortcuts {
+        display: none; /* Hide shortcuts on mobile */
+    }
+}

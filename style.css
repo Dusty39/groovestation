@@ -924,3 +924,93 @@ kbd {
         display: none;
     }
 }
+
+/* Mobile Landscape Optimization */
+@media (max-height: 480px) and (orientation: landscape) {
+    body {
+        padding-top: 0;
+    }
+
+    .app-container {
+        height: 100vh;
+    }
+
+    .studio-header {
+        padding: 5px 10px;
+        flex-direction: row;
+        /* Keep horizontal */
+        flex-wrap: nowrap;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .logo h1 {
+        font-size: 14px;
+        /* Smaller logo */
+        white-space: nowrap;
+    }
+
+    .transport-controls {
+        flex-grow: 1;
+        width: auto;
+        gap: 5px;
+    }
+
+    .controls-center {
+        display: flex;
+        /* Show controls */
+        order: 2;
+        /* Move to middle */
+        width: auto;
+        margin: 0;
+        flex-grow: 1;
+        justify-content: center;
+    }
+
+    .controls-center label,
+    .controls-center input,
+    .controls-center select {
+        font-size: 10px;
+        padding: 2px;
+        margin-left: 3px;
+    }
+
+    .controls-center input {
+        width: 40px;
+    }
+
+    .controls-left,
+    .controls-right {
+        order: 1;
+        white-space: nowrap;
+    }
+
+    .controls-right {
+        order: 3;
+    }
+
+    .sequencer-container {
+        padding: 5px;
+    }
+
+    .step {
+        height: 30px;
+        /* Slightly smaller in landscape */
+        min-width: 25px;
+    }
+
+    .footer-btn {
+        padding: 5px 10px;
+        width: auto;
+        font-size: 10px;
+    }
+
+    .footer-btn i {
+        font-size: 12px;
+    }
+
+    .footer-controls .footer-btn span {
+        display: inline;
+        /* Show text again if fits */
+    }
+}
